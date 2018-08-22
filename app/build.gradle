@@ -29,7 +29,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.2'
     // dexter M permissions
     implementation 'com.karumi:dexter:4.1.0'
-    compile 'com.github.QuadFlask:colorpicker:0.0.13'
+    implementation 'com.github.QuadFlask:colorpicker:0.0.13'
     implementation files('libs/android-retention-magic-1.2.2.jar')
     implementation files('libs/drawablepagertabstrip.jar')
 }
