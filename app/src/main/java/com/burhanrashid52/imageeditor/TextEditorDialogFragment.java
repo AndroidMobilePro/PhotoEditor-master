@@ -2,13 +2,16 @@ package com.burhanrashid52.imageeditor;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.ChangeBounds;
@@ -21,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -29,6 +33,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -42,7 +47,6 @@ import com.burhanrashid52.imageeditor.color.palettes.Palette;
 import com.burhanrashid52.imageeditor.color.palettes.RainbowColorFactory;
 import com.burhanrashid52.imageeditor.color.palettes.RandomPalette;
 import com.burhanrashid52.imageeditor.constants.Contants;
-import com.burhanrashid52.imageeditor.fonts.FontsAdapters;
 import com.burhanrashid52.imageeditor.fonts.FontsBSFragment;
 
 import org.dmfs.android.retentionmagic.annotations.Retain;
@@ -60,6 +64,8 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
     private EditText mAddTextEditText;
     private TextView mAddTextDoneTextView;
+    private TextView tvPhotoEditorTextPreview;
+
     private InputMethodManager mInputMethodManager;
     private int mColorCode;
     private static int mSizeCode = 25;
@@ -71,17 +77,24 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     RecyclerView addRecyclerView;
     RecyclerView addTextFontsRecyclerView;
     RecyclerView shadowRecyclerView;
+    RecyclerView strokeRecyclerView;
 
     private SeekBar mSeekBarShadow;
+    private SeekBar sbBlurSize;
+    private SeekBar sbLetterSpacing;
+    private SeekBar sbLineSpacing;
 
     LinearLayout shadowContainer;
-
     LinearLayout containerTextSize;
+    LinearLayout containerSpacing;
+
+
     SeekBar sbBrushSize;
 
     ImageView imgClose;
     ImageView imgMore;
 
+    RadioGroup rdGroupBlur;
     private ConstraintLayout mRootView;
     private ConstraintSet mConstraintSet = new ConstraintSet();
 
@@ -89,9 +102,14 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     private boolean mIsFonts;
     private boolean mIsSizes;
     private boolean mIsShadow;
+    private boolean mIsStroke;
+    private boolean mIsBlur;
+    private boolean mIsSpacing;
 
     private int currentSeekBar = 30;
     private int currentColorShadow;
+    private int currentSeekBarBlur = 25;
+    private BlurMaskFilter.Blur currentBlur = BlurMaskFilter.Blur.NORMAL;
 
     private final static int[] COLORS = new int[]{
             0xff000000, 0xff0000ff, 0xff00ff00, 0xffff0000, 0xffffff00, 0xff00ffff, 0xffff00ff, 0xff404040,
@@ -216,15 +234,25 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         mAddTextEditText = view.findViewById(R.id.add_text_edit_text);
         mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mAddTextDoneTextView = view.findViewById(R.id.add_text_done_tv);
+        tvPhotoEditorTextPreview = view.findViewById(R.id.tvPhotoEditorfffTextPreview);
 
 
         sbBrushSize = view.findViewById(R.id.sbSize);
         containerTextSize = view.findViewById(R.id.containerTextSize);
+        containerSpacing = view.findViewById(R.id.containerSpacing);
+
+
         imgClose = view.findViewById(R.id.imgClose);
 
         mSeekBarShadow = view.findViewById(R.id.sbSizeShadow);
+        sbBlurSize = view.findViewById(R.id.sbBlurSize);
+        sbLetterSpacing = view.findViewById(R.id.sbLetterSpacing);
+        sbLineSpacing = view.findViewById(R.id.sbLineSpacing);
 
         shadowContainer = view.findViewById(R.id.container_add_shadow_recycler_view);
+        containerBlur = view.findViewById(R.id.containerBlur);
+
+        rdGroupBlur = view.findViewById(R.id.rdGroupBlur);
 
         //Setup the color picker for text color
         addTextColorPickerRecyclerView = view.findViewById(R.id.add_text_color_picker_recycler_view);
@@ -340,6 +368,31 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 //        });
         addTextFontsRecyclerView.setAdapter(fontsAdapter);
 
+        //Setup the color picker for text color
+        strokeRecyclerView = view.findViewById(R.id.add_stroke_recycler_view);
+        LinearLayoutManager layoutStrokeManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        strokeRecyclerView.setLayoutManager(layoutStrokeManager);
+        strokeRecyclerView.setHasFixedSize(true);
+        StrokeColorPickerAdapter strokeAdapter = new StrokeColorPickerAdapter(getActivity());
+        //This listener will change the text color when clicked on any color from picker
+        strokeAdapter.setOnStrokeColorPickerClickListener(new StrokeColorPickerAdapter.OnStrokeColorPickerClickListener() {
+            @Override
+            public void onStrokeColorPickerClickListener(final int colorCode) {
+//                mColorCode = colorCode;
+//                mAddTextEditText.setTextColor(colorCode);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        tvPhotoEditorTextPreview.setStrokeWidth(10);
+//                        tvPhotoEditorTextPreview.setStrokeColor(Color.RED);
+//                        applyBlurMaskFilter(mAddTextEditText, BlurMaskFilter.Blur.OUTER);
+                    }
+                });
+            }
+        });
+
+        strokeRecyclerView.setAdapter(strokeAdapter);
+
         sbBrushSize.setOnSeekBarChangeListener(this);
 
         imgClose.setOnClickListener(new View.OnClickListener() {
@@ -354,6 +407,12 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
                     showShadowText(false);
                 } else if (mIsColor) {
                     showColorText(false);
+                } else if (mIsStroke) {
+                    showStrokeText(false);
+                } else if (mIsBlur) {
+                    showBlueText(false);
+                } else if (mIsSpacing) {
+                    showSpacingText(false);
                 } else {
                     dismiss();
                 }
@@ -361,7 +420,9 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         });
 
         imgMore = view.findViewById(R.id.imgMore);
-        imgMore.setOnClickListener(new View.OnClickListener() {
+        imgMore.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View view) {
                 if (mIsFonts) {
@@ -380,6 +441,92 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
             }
         });
+
+        rdGroupBlur.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (radioGroup.getCheckedRadioButtonId()) {
+                    case R.id.rbNoBlur:
+                        // If no blur is checked
+                        // Set the TextView layer type
+                        mAddTextEditText.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        // Clear any previous MaskFilter
+                        mAddTextEditText.getPaint().setMaskFilter(null);
+                        break;
+                    case R.id.rbNormalBlur:
+                        currentBlur = BlurMaskFilter.Blur.NORMAL;
+                        applyBlurMaskFilter(mAddTextEditText, BlurMaskFilter.Blur.NORMAL, currentSeekBarBlur);
+                        break;
+                    case R.id.rbInnerBlur:
+                        currentBlur = BlurMaskFilter.Blur.INNER;
+                        applyBlurMaskFilter(mAddTextEditText, BlurMaskFilter.Blur.INNER, currentSeekBarBlur);
+                        break;
+                    case R.id.rbOuterBlur:
+                        currentBlur = BlurMaskFilter.Blur.OUTER;
+                        applyBlurMaskFilter(mAddTextEditText, BlurMaskFilter.Blur.OUTER, currentSeekBarBlur);
+                        break;
+                    case R.id.rbSolidBlur:
+                        currentBlur = BlurMaskFilter.Blur.SOLID;
+                        applyBlurMaskFilter(mAddTextEditText, BlurMaskFilter.Blur.SOLID, currentSeekBarBlur);
+                        break;
+                }
+
+            }
+        });
+
+        sbBlurSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                currentSeekBarBlur = i;
+                applyBlurMaskFilter(mAddTextEditText, currentBlur, currentSeekBar);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        sbLetterSpacing.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                mAddTextEditText.setLetterSpacing(i / 30);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        sbLineSpacing.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                mAddTextEditText.setLineSpacing(0, i / 30);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
     }
 
@@ -485,6 +632,80 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         mConstraintSet.applyTo(mRootView);
     }
 
+    LinearLayout containerBlur;
+
+    void showStrokeText(boolean isVisible) {
+        mIsStroke = isVisible;
+        mConstraintSet.clone(mRootView);
+
+        if (isVisible) {
+            mConstraintSet.clear(strokeRecyclerView.getId(), ConstraintSet.START);
+            mConstraintSet.connect(strokeRecyclerView.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.START);
+            mConstraintSet.connect(strokeRecyclerView.getId(), ConstraintSet.END,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+        } else {
+            mConstraintSet.connect(strokeRecyclerView.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+            mConstraintSet.clear(strokeRecyclerView.getId(), ConstraintSet.END);
+        }
+
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(350);
+        changeBounds.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
+        TransitionManager.beginDelayedTransition(mRootView, changeBounds);
+
+        mConstraintSet.applyTo(mRootView);
+    }
+
+    void showBlueText(boolean isVisible) {
+        mIsBlur = isVisible;
+        mConstraintSet.clone(mRootView);
+
+        if (isVisible) {
+            mConstraintSet.clear(containerBlur.getId(), ConstraintSet.START);
+            mConstraintSet.connect(containerBlur.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.START);
+            mConstraintSet.connect(containerBlur.getId(), ConstraintSet.END,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+        } else {
+            mConstraintSet.connect(containerBlur.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+            mConstraintSet.clear(containerBlur.getId(), ConstraintSet.END);
+        }
+
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(350);
+        changeBounds.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
+        TransitionManager.beginDelayedTransition(mRootView, changeBounds);
+
+        mConstraintSet.applyTo(mRootView);
+    }
+
+    void showSpacingText(boolean isVisible) {
+        mIsSpacing = isVisible;
+        mConstraintSet.clone(mRootView);
+
+        if (isVisible) {
+            mConstraintSet.clear(containerSpacing.getId(), ConstraintSet.START);
+            mConstraintSet.connect(containerSpacing.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.START);
+            mConstraintSet.connect(containerSpacing.getId(), ConstraintSet.END,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+        } else {
+            mConstraintSet.connect(containerSpacing.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+            mConstraintSet.clear(containerSpacing.getId(), ConstraintSet.END);
+        }
+
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(350);
+        changeBounds.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
+        TransitionManager.beginDelayedTransition(mRootView, changeBounds);
+
+        mConstraintSet.applyTo(mRootView);
+    }
+
 
     @Override
     public void onFormatListener() {
@@ -525,6 +746,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     @Override
     public void onStrokeListener() {
         imgMore.setVisibility(View.VISIBLE);
+        showStrokeText(true);
         Log.d("TAGGG", "onStrokeListener");
     }
 
@@ -537,7 +759,15 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     @Override
     public void onSpacingListener() {
         imgMore.setVisibility(View.VISIBLE);
+        showSpacingText(true);
         Log.d("TAGGG", "onSpacingListener");
+    }
+
+    @Override
+    public void onBlurListener() {
+        imgMore.setVisibility(View.VISIBLE);
+        showBlueText(true);
+        Log.d("TAGGG", "onBlurListener");
     }
 
 
@@ -635,6 +865,95 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
         // show the fragment
         d.show(getActivity().getSupportFragmentManager(), "");
+    }
+
+
+    // Custom method to apply BlurMaskFilter to a TextView text
+    protected void applyBlurMaskFilter(EditText tv, BlurMaskFilter.Blur style, int radiusOrg) {
+        /*
+            MaskFilter
+                Known Direct Subclasses
+                    BlurMaskFilter, EmbossMaskFilter
+
+                MaskFilter is the base class for object that perform transformations on an
+                alpha-channel mask before drawing it. A subclass of MaskFilter may be installed
+                into a Paint. Blur and emboss are implemented as subclasses of MaskFilter.
+
+        */
+        /*
+            BlurMaskFilter
+                This takes a mask, and blurs its edge by the specified radius. Whether or or not to
+                include the original mask, and whether the blur goes outside, inside, or straddles,
+                the original mask's border, is controlled by the Blur enum.
+        */
+        /*
+            public BlurMaskFilter (float radius, BlurMaskFilter.Blur style)
+                Create a blur maskfilter.
+
+            Parameters
+                radius : The radius to extend the blur from the original mask. Must be > 0.
+                style : The Blur to use
+            Returns
+                The new blur maskfilter
+        */
+        /*
+            BlurMaskFilter.Blur
+                INNER : Blur inside the border, draw nothing outside.
+                NORMAL : Blur inside and outside the original border.
+                OUTER : Draw nothing inside the border, blur outside.
+                SOLID : Draw solid inside the border, blur outside.
+        */
+        /*
+            public float getTextSize ()
+                Returns the size (in pixels) of the default text size in this TextView.
+        */
+
+        // Define the blur effect radius
+        float radius = radiusOrg / 5;
+
+
+        // Initialize a new BlurMaskFilter instance
+        BlurMaskFilter filter = new BlurMaskFilter(radius, style);
+
+        /*
+            public void setLayerType (int layerType, Paint paint)
+                Specifies the type of layer backing this view. The layer can be LAYER_TYPE_NONE,
+                LAYER_TYPE_SOFTWARE or LAYER_TYPE_HARDWARE.
+
+                A layer is associated with an optional Paint instance that controls how the
+                layer is composed on screen.
+
+            Parameters
+                layerType : The type of layer to use with this view, must be one of
+                    LAYER_TYPE_NONE, LAYER_TYPE_SOFTWARE or LAYER_TYPE_HARDWARE
+                paint : The paint used to compose the layer. This argument is optional and
+                    can be null. It is ignored when the layer type is LAYER_TYPE_NONE
+        */
+        /*
+            public static final int LAYER_TYPE_SOFTWARE
+                Indicates that the view has a software layer. A software layer is backed by
+                a bitmap and causes the view to be rendered using Android's software rendering
+                pipeline, even if hardware acceleration is enabled.
+        */
+
+        // Set the TextView layer type
+        tv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        /*
+            public MaskFilter setMaskFilter (MaskFilter maskfilter)
+                Set or clear the maskfilter object.
+
+                Pass null to clear any previous maskfilter. As a convenience, the parameter
+                passed is also returned.
+
+            Parameters
+                maskfilter : May be null. The maskfilter to be installed in the paint
+            Returns
+                maskfilter
+        */
+
+        // Finally, apply the blur effect on TextView text
+        tv.getPaint().setMaskFilter(filter);
     }
 
 }

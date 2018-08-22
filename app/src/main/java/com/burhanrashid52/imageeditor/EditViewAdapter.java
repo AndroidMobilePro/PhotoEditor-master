@@ -43,6 +43,7 @@ public class EditViewAdapter extends RecyclerView.Adapter<EditViewAdapter.ViewHo
         list.add("STROKE");
         list.add("HIGHLIGHT");
         list.add("SPACING");
+        list.add("BLUR");
     }
 
     public EditViewAdapter(Context context, EditViewListener editViewListener) {
@@ -88,6 +89,9 @@ public class EditViewAdapter extends RecyclerView.Adapter<EditViewAdapter.ViewHo
                         break;
                     case "SPACING":
                         mEditViewListener.onSpacingListener();
+                        break;
+                    case "BLUR":
+                        mEditViewListener.onBlurListener();
                         break;
                     default:
                         mEditViewListener.onFormatListener();
@@ -138,6 +142,8 @@ public class EditViewAdapter extends RecyclerView.Adapter<EditViewAdapter.ViewHo
         void onHighLightListener();
 
         void onSpacingListener();
+
+        void onBlurListener();
 
     }
 }

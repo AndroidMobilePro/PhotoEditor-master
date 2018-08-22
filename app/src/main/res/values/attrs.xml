@@ -4,4 +4,9 @@
         <!-- {@deprecated Use photo_src instead.} -->
         <attr name="photo_src" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="OutlinedTextView">
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="strokeColor" format="color"/>
+    </declare-styleable>
 </resources>
