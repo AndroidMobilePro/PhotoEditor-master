@@ -75,6 +75,7 @@ public class WelcomeActivity extends AppCompatActivity {
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                prefManager.setFirstTimeLaunch(true);
                 launchHomeScreen();
             }
         });
@@ -89,6 +90,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     // move to next screen
                     viewPager.setCurrentItem(current);
                 } else {
+                    prefManager.setFirstTimeLaunch(false);
                     launchHomeScreen();
                 }
             }
@@ -119,7 +121,6 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void launchHomeScreen() {
-        prefManager.setFirstTimeLaunch(false);
         startActivity(new Intent(WelcomeActivity.this, StartActivity.class));
         finish();
     }

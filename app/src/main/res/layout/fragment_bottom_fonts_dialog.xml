@@ -34,6 +34,16 @@
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/txtClose" />
 
+        <TextView
+            android:id="@+id/tvPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="6dp"
+            android:text="PREVIEW"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvEmoji"
             android:layout_width="0dp"
@@ -44,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lineView" />
+            app:layout_constraintTop_toBottomOf="@+id/tvPreview" />
 
         <TextView
             android:id="@+id/txtDone"

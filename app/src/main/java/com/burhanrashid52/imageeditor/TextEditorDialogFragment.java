@@ -42,14 +42,12 @@ import com.burhanrashid52.imageeditor.color.palettes.Palette;
 import com.burhanrashid52.imageeditor.color.palettes.RainbowColorFactory;
 import com.burhanrashid52.imageeditor.color.palettes.RandomPalette;
 import com.burhanrashid52.imageeditor.constants.Contants;
+import com.burhanrashid52.imageeditor.fonts.FontsAdapters;
+import com.burhanrashid52.imageeditor.fonts.FontsBSFragment;
 
 import org.dmfs.android.retentionmagic.annotations.Retain;
 
 import java.util.ArrayList;
-
-/**
- * Created by Burhanuddin Rashid on 1/16/2018.
- */
 
 public class TextEditorDialogFragment extends DialogFragment implements EditViewAdapter.EditViewListener, SeekBar.OnSeekBarChangeListener, ColorPickerDialogFragment.ColorDialogResultListener {
 
@@ -57,11 +55,14 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     public static final String EXTRA_INPUT_TEXT = "extra_input_text";
     public static final String EXTRA_COLOR_CODE = "extra_color_code";
     public static final String EXTRA_SIZE_CODE = "extra_size_code";
+
+    FontsBSFragment fontsBSFragment;
+
     private EditText mAddTextEditText;
     private TextView mAddTextDoneTextView;
     private InputMethodManager mInputMethodManager;
     private int mColorCode;
-    private int mSizeCode = 40;
+    private static int mSizeCode = 25;
     private TextEditor mTextEditor;
     private static Typeface mTypeface;
     private EditViewAdapter mEditViewAdapter;
@@ -107,6 +108,19 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     @Retain(permanent = true, classNS = "DemoActivity")
     private String mSelectedPalette = null;
 
+    @Override
+    public void onColorChanged(int color, String paletteId, String colorName, String paletteName) {
+        Log.d("TABBBB", color + "");
+        mSelectedPalette = paletteId;
+        mColorCode = color;
+        mAddTextEditText.setTextColor(mColorCode);
+    }
+
+    @Override
+    public void onColorDialogCancelled() {
+
+    }
+
     public interface TextEditor {
         void onDone(String inputText, int colorCode);
 
@@ -121,7 +135,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         Bundle args = new Bundle();
         args.putString(EXTRA_INPUT_TEXT, inputText);
         args.putInt(EXTRA_COLOR_CODE, colorCode);
-        args.putInt(EXTRA_SIZE_CODE, 40);
+        args.putInt(EXTRA_SIZE_CODE, mSizeCode);
         TextEditorDialogFragment fragment = new TextEditorDialogFragment();
         fragment.setArguments(args);
         fragment.show(appCompatActivity.getSupportFragmentManager(), TAG);
@@ -139,9 +153,11 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         Bundle args = new Bundle();
         String type = typeface.toString();
         Log.d("TAGGG", type);
+        Log.d("TABBBB", textSize + "");
         args.putString(EXTRA_INPUT_TEXT, inputText);
         args.putInt(EXTRA_COLOR_CODE, colorCode);
         args.putInt(EXTRA_SIZE_CODE, textSize);
+        mSizeCode = textSize;
 
         TextEditorDialogFragment fragment = new TextEditorDialogFragment();
         fragment.setArguments(args);
@@ -195,6 +211,8 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         super.onViewCreated(view, savedInstanceState);
         mRootView = view.findViewById(R.id.rootView);
 
+        fontsBSFragment = new FontsBSFragment();
+
         mAddTextEditText = view.findViewById(R.id.add_text_edit_text);
         mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mAddTextDoneTextView = view.findViewById(R.id.add_text_done_tv);
@@ -224,6 +242,9 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         });
         addTextColorPickerRecyclerView.setAdapter(colorPickerAdapter);
         mAddTextEditText.setText(getArguments().getString(EXTRA_INPUT_TEXT));
+        if (!TextUtils.isEmpty(getArguments().getString(EXTRA_INPUT_TEXT))) {
+            mAddTextEditText.setSelection(mAddTextEditText.getText().length());
+        }
         mColorCode = getArguments().getInt(EXTRA_COLOR_CODE);
         mSizeCode = getArguments().getInt(EXTRA_SIZE_CODE);
         mAddTextEditText.setTextColor(mColorCode);
@@ -343,7 +364,20 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         imgMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onClickColor();
+                if (mIsFonts) {
+                    fontsBSFragment.show(getActivity().getSupportFragmentManager(), fontsBSFragment.getTag());
+                    fontsBSFragment.setFontListener(new FontsBSFragment.FontsListener() {
+                        @Override
+                        public void onFontClick(String fonts) {
+                            mTypeface = Typeface.createFromAsset(getActivity().getAssets(),
+                                    Contants.folderFontPath + fonts);
+                            mAddTextEditText.setTypeface(mTypeface);
+                        }
+                    });
+                } else {
+                    onClickColor();
+                }
+
             }
         });
 
@@ -461,6 +495,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
     @Override
     public void onFontListener() {
+        imgMore.setVisibility(View.VISIBLE);
         showFontsText(true);
         Log.d("TAGGG", "onFontListener");
     }
@@ -528,6 +563,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
     public void onClickColor() {
         ColorPickerDialogFragment d = new ColorPickerDialogFragment();
+        d.setColorDialogResultListener(this);
 
         ArrayList<Palette> palettes = new ArrayList<Palette>();
 
@@ -599,17 +635,6 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
         // show the fragment
         d.show(getActivity().getSupportFragmentManager(), "");
-    }
-
-
-    @Override
-    public void onColorChanged(int color, String paletteId, String colorName, String paletteName) {
-        mSelectedPalette = paletteId;
-    }
-
-
-    @Override
-    public void onColorDialogCancelled() {
     }
 
 }

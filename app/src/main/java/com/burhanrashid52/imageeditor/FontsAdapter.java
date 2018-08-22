@@ -40,7 +40,7 @@ public class FontsAdapter extends RecyclerView.Adapter<FontsAdapter.ViewHolder> 
     private LayoutInflater inflater;
     private OnTextPickerClickListener onTextPickerClickListener;
 
-    FontsAdapter(@NonNull Context context) {
+    public FontsAdapter(@NonNull Context context) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
 //        sArrayString.clear();

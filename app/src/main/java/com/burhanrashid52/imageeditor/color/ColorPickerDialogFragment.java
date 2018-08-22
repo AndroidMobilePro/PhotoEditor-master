@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +43,7 @@ import org.dmfs.android.view.ViewPager;
  *
  * @author Marten Gajda
  */
-public class ColorPickerDialogFragment extends SupportDialogFragment implements PaletteFragment.OnColorSelectedListener
-{
+public class ColorPickerDialogFragment extends SupportDialogFragment implements PaletteFragment.OnColorSelectedListener {
     private ViewPager mPager;
     private TextView mTitleView;
     private PalettesPagerAdapter mPagerAdapter;
@@ -58,15 +58,19 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
      */
     private int mSelected = 0;
 
+    private ColorDialogResultListener colorDialogResultListener;
+
+    public void setColorDialogResultListener(ColorDialogResultListener colorDialogResultListener) {
+        this.colorDialogResultListener = colorDialogResultListener;
+    }
+
 
     /**
      * Set the palettes to show.
      *
-     * @param palettes
-     *         An array of {@link Palette}s.
+     * @param palettes An array of {@link Palette}s.
      */
-    public void setPalettes(Palette... palettes)
-    {
+    public void setPalettes(Palette... palettes) {
         mPalettes = palettes;
     }
 
@@ -74,24 +78,18 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
     /**
      * Switch to a specific palette with the given ID. Has no effect if no palette with that id is found.
      *
-     * @param id
-     *         The id of the palette to select.
+     * @param id The id of the palette to select.
      */
-    public void selectPaletteId(String id)
-    {
-        if (mPalettes == null || id == null)
-        {
+    public void selectPaletteId(String id) {
+        if (mPalettes == null || id == null) {
             return;
         }
 
         int index = 0;
-        for (Palette palette : mPalettes)
-        {
-            if (TextUtils.equals(id, palette.id()))
-            {
+        for (Palette palette : mPalettes) {
+            if (TextUtils.equals(id, palette.id())) {
                 mSelected = index;
-                if (mPager != null && mPagerAdapter != null)
-                {
+                if (mPager != null && mPagerAdapter != null) {
                     mPager.setCurrentItem(mPagerAdapter.getCount() / 2 + mSelected);
                 }
                 return;
@@ -104,14 +102,11 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
     /**
      * Set the dialog title.
      *
-     * @param title
-     *         The title of the dialog.
+     * @param title The title of the dialog.
      */
-    public void setTitle(CharSequence title)
-    {
+    public void setTitle(CharSequence title) {
         mTitle = title;
-        if (mTitleView != null)
-        {
+        if (mTitleView != null) {
             mTitleView.setText(title);
         }
     }
@@ -120,22 +115,18 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
     /**
      * Set the dialog title.
      *
-     * @param title
-     *         The resource id of a string resource with the title.
+     * @param title The resource id of a string resource with the title.
      */
-    public void setTitle(int title)
-    {
+    public void setTitle(int title) {
         mTitleId = title;
-        if (mTitleView != null)
-        {
+        if (mTitleView != null) {
             mTitleView.setText(title);
         }
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.org_dmfs_colorpickerdialog_fragment, container);
 
         mPager = (ViewPager) view.findViewById(R.id.pager);
@@ -146,12 +137,9 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
 
         mTitleView = (TextView) view.findViewById(android.R.id.title);
 
-        if (mTitleId != 0)
-        {
+        if (mTitleId != 0) {
             mTitleView.setText(mTitleId);
-        }
-        else if (mTitle != null)
-        {
+        } else if (mTitle != null) {
             mTitleView.setText(mTitle);
         }
 
@@ -160,8 +148,7 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
 
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog result = super.onCreateDialog(savedInstanceState);
         result.requestWindowFeature(Window.FEATURE_NO_TITLE);
         result.setOnCancelListener(this);
@@ -170,13 +157,12 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
 
 
     @Override
-    public void onColorSelected(int color, String paletteId, String colorName, String paletteName)
-    {
-        ColorDialogResultListener listener = getListener();
+    public void onColorSelected(int color, String paletteId, String colorName, String paletteName) {
+        Log.d("TAGGG", color + "--" + colorName);
+//        ColorDialogResultListener listener = getListener();
 
-        if (listener != null)
-        {
-            listener.onColorChanged(color, paletteId, colorName, paletteName);
+        if (colorDialogResultListener != null) {
+            colorDialogResultListener.onColorChanged(color, paletteId, colorName, paletteName);
         }
 
         dismiss();
@@ -184,13 +170,11 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
 
 
     @Override
-    public void onCancel(DialogInterface dialog)
-    {
-        ColorDialogResultListener listener = getListener();
+    public void onCancel(DialogInterface dialog) {
+//        ColorDialogResultListener listener = getListener();
 
-        if (listener != null)
-        {
-            listener.onColorDialogCancelled();
+        if (colorDialogResultListener != null) {
+            colorDialogResultListener.onColorDialogCancelled();
         }
     }
 
@@ -201,37 +185,28 @@ public class ColorPickerDialogFragment extends SupportDialogFragment implements 
      * @return A {@link ColorDialogResultListener} or <code>null</code> if neither the parent {@link Activity} nor the parent {@link android.app.Fragment}
      * implement this interface.
      */
-    private ColorDialogResultListener getListener()
-    {
+    private ColorDialogResultListener getListener() {
         ColorDialogResultListener listener = null;
         Fragment parentFragment = getParentFragment();
         Activity parentActivity = getActivity();
 
-        if (parentFragment instanceof ColorDialogResultListener)
-        {
+        if (parentFragment instanceof ColorDialogResultListener) {
             listener = (ColorDialogResultListener) parentFragment;
-        }
-        else if (parentActivity instanceof ColorDialogResultListener)
-        {
+        } else if (parentActivity instanceof ColorDialogResultListener) {
             listener = (ColorDialogResultListener) parentActivity;
         }
         return listener;
     }
 
 
-    public interface ColorDialogResultListener
-    {
+    public interface ColorDialogResultListener {
         /**
          * Called when a color has been picked in the dialog.
          *
-         * @param color
-         *         The color.
-         * @param paletteId
-         *         The id of the palette.
-         * @param colorName
-         *         The name of the color or <code>null</code>.
-         * @param paletteName
-         *         The name of the palette or <code>null</code>.
+         * @param color       The color.
+         * @param paletteId   The id of the palette.
+         * @param colorName   The name of the color or <code>null</code>.
+         * @param paletteName The name of the palette or <code>null</code>.
          */
         public void onColorChanged(int color, String paletteId, String colorName, String paletteName);
 

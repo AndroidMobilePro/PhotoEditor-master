@@ -216,6 +216,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             @Override
             public void onDone(Typeface typeface, String inputText, int colorCode, int textSize) {
+                Log.d("TABBBB", textSize+"");
                 mPhotoEditor.editText(rootView, typeface, inputText, colorCode, textSize);
                 mTxtCurrentTool.setText(R.string.label_text);
             }
@@ -235,7 +236,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             @Override
             public void onDone(Typeface typeface, String inputText, int colorCode, int textSize) {
-                Log.d("TAHHHHH", textSize + "");
+                Log.d("TABBBB", textSize+"");
                 mPhotoEditor.editText(rootView, typeface, inputText, colorCode, textSize);
                 mTxtCurrentTool.setText(R.string.label_text);
             }

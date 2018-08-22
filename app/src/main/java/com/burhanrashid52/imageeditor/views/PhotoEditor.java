@@ -139,6 +139,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         textInputTv.setText(text);
         textInputTv.setTextColor(colorCodeTextView);
         textInputTv.setTextSize(textSize);
+        currentSize = textSize;
         if (textTypeface != null) {
             textInputTv.setTypeface(textTypeface);
         }
@@ -156,7 +157,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onLongClick() {
                 String textInput = textInputTv.getText().toString();
                 int currentTextColor = textInputTv.getCurrentTextColor();
-                int currentTextSize = (int)textInputTv.getTextSize();
+                int currentTextSize = currentSize;
                 Log.d("TAJJJ", currentTextSize+"");
                 Typeface currentTypeFace = textInputTv.getTypeface();
                 if (mOnPhotoEditorListener != null) {
@@ -202,6 +203,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             if (i > -1) addedViews.set(i, view);
         }
     }
+    private int currentSize;
 
     /**
      * This will update the text and color on provided view
@@ -220,6 +222,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
             inputTextView.setTextColor(colorCode);
             inputTextView.setTextSize(textSize);
+            currentSize = textSize;
             parentView.updateViewLayout(view, view.getLayoutParams());
             int i = addedViews.indexOf(view);
             if (i > -1) addedViews.set(i, view);
