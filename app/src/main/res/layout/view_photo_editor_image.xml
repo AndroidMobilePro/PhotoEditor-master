@@ -31,21 +31,4 @@
 
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/imgPhotoEditorRotation"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="bottom|start"
-        android:elevation="1dp"
-        android:src="@drawable/ic_remove" />
-
-
-    <ImageView
-        android:id="@+id/imgPhotoEditorZoom"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="bottom|end"
-        android:elevation="1dp"
-        android:src="@drawable/ic_remove" />
-
 </FrameLayout>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B3000000"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="?attr/actionBarSize" />
+
+    <TextView
+        android:id="@+id/add_text_done_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_border_text_view"
+        android:padding="10dp"
+        android:text="Done"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/add_text_preview"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_border_tv"
+        android:padding="10dp"
+        android:text="ffffffffffddddddddddfffffffffff"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="@+id/add_text_edit_text"
+        app:layout_constraintTop_toTopOf="@+id/add_text_edit_text"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/tvPhotoEditorfffTextPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:background="@drawable/shape_dot_1"
+            android:text="Preview"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            tools:textColor="@android:color/white" />
+
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/add_text_edit_text"
+        style="@style/EditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gray_1"
+        android:gravity="center"
+        android:hint="Tap to Add Text"
+        android:inputType="textMultiLine"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:textColorHint="#AAFFFFFF"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_text_done_tv" />
+
+    <ImageView
+        android:id="@+id/imgMore"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="6dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_more"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imgClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/ic_close"
+        app:layout_constraintBottom_toTopOf="@+id/add_text_color_picker_recycler_view" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_text_color_picker_recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/add_picker_recycler_view"
+        tools:background="@android:color/black"
+        tools:listitem="@layout/color_picker_item_list" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_text_fonts_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/tool_bg"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_text_color_picker_recycler_view"
+        tools:listitem="@layout/row_filter_view" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_stroke_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/tool_bg"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_text_color_picker_recycler_view"
+        tools:listitem="@layout/row_filter_view" />
+
+    <LinearLayout
+        android:id="@+id/container_add_shadow_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_text_color_picker_recycler_view">
+
+        <SeekBar
+            android:id="@+id/sbSizeShadow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="30" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/add_shadow_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/tool_bg"
+            android:orientation="horizontal"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_filter_view" />
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_picker_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideline"
+        tools:background="@android:color/black"
+        tools:listitem="@layout/color_picker_item_list" />
+
+    <LinearLayout
+        android:id="@+id/containerTextSize"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_text_color_picker_recycler_view">
+
+        <TextView
+            android:id="@+id/txtBrushSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Text Size"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <SeekBar
+            android:id="@+id/sbSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="40" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/containerBlur"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_text_color_picker_recycler_view">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <SeekBar
+                android:id="@+id/sbBlurSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progress="25" />
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioGroup
+                    android:id="@+id/rdGroupBlur"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:textColor="@color/gray_1">
+
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/rbNoBlur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="No Blur" />
+
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/rbInnerBlur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="Inner Blur" />
+
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/rbNormalBlur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="Normal Blur" />
+
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/rbOuterBlur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="Outer Blur" />
+
+                    <android.support.v7.widget.AppCompatRadioButton
+                        android:id="@+id/rbSolidBlur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="Solid Blur" />
+
+                </RadioGroup>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/containerSpacing"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_text_color_picker_recycler_view">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Letter Spacing:"
+            android:textColor="@color/black" />
+
+        <SeekBar
+            android:id="@+id/sbLetterSpacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="25" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Line Spacing:"
+            android:textColor="@color/black" />
+
+        <SeekBar
+            android:id="@+id/sbLineSpacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="25" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

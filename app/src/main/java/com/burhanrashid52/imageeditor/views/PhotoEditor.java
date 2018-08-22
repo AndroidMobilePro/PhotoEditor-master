@@ -50,6 +50,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private View deleteView;
     private BrushDrawingView brushDrawingView;
     private List<View> addedViews;
+    private List<View> addedImageViews;
     private List<View> redoViews;
     private OnPhotoEditorListener mOnPhotoEditorListener;
     private boolean isTextPinchZoomable;
@@ -70,6 +71,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         brushDrawingView.setBrushViewChangeListener(this);
         addedViews = new ArrayList<>();
         redoViews = new ArrayList<>();
+        addedImageViews = new ArrayList<>();
     }
 
     /**
@@ -78,7 +80,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage) {
+    public void addImage(final Bitmap desiredImage) {
         final View imageRootView = getLayout(ViewType.IMAGE);
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
@@ -98,7 +100,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             @Override
             public void onLongClick() {
-
+                mOnPhotoEditorListener.onImageChangeListener(imageRootView, desiredImage);
             }
         });
 
@@ -107,6 +109,25 @@ public class PhotoEditor implements BrushViewChangeListener {
         addViewToParent(imageRootView, ViewType.IMAGE);
 
     }
+
+    /**
+     * This will add image on {@link PhotoEditorView} which you drag,rotate and scale using pinch
+     * if {@link PhotoEditor.Builder#setPinchTextScalable(boolean)} enabled
+     *
+     * @param desiredImage bitmap image you want to add
+     */
+    public void addImageTemp(View view, Bitmap desiredImage) {
+        final ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
+
+        if (imageView != null && addedImageViews.contains(view)) {
+            imageView.setImageResource(R.drawable.ic_food);
+            parentView.updateViewLayout(view, view.getLayoutParams());
+            int i = addedImageViews.indexOf(view);
+            if (i > -1) addedImageViews.set(i, view);
+        }
+
+    }
+
 
     /**
      * This add the text on the {@link PhotoEditorView} with provided parameters
@@ -158,7 +179,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 String textInput = textInputTv.getText().toString();
                 int currentTextColor = textInputTv.getCurrentTextColor();
                 int currentTextSize = currentSize;
-                Log.d("TAJJJ", currentTextSize+"");
+                Log.d("TAJJJ", currentTextSize + "");
                 Typeface currentTypeFace = textInputTv.getTypeface();
                 if (mOnPhotoEditorListener != null) {
 //                    mOnPhotoEditorListener.onEditTextChangeListener(textRootView, textInput, currentTextColor);
@@ -203,6 +224,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             if (i > -1) addedViews.set(i, view);
         }
     }
+
     private int currentSize;
 
     /**
@@ -288,6 +310,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         parentView.addView(rootView, params);
         addedViews.add(rootView);
+        addedImageViews.add(rootView);
         if (mOnPhotoEditorListener != null)
             mOnPhotoEditorListener.onAddViewListener(viewType, addedViews.size());
     }
@@ -733,7 +756,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     /**
      * Save the edited image as bitmap
      *
-     * @param saveSettings   builder for multiple save options {@link SaveSettings}
+     * @param saveSettings builder for multiple save options {@link SaveSettings}
      * @param onSaveBitmap callback for saving image as bitmap
      * @see OnSaveBitmap
      */

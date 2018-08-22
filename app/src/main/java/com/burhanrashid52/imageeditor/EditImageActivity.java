@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -200,6 +201,28 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         imgOpen = findViewById(R.id.imgOpen);
         imgOpen.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onImageChangeListener(final View rootView, Bitmap bitmap) {
+//        mPhotoEditor.addImageTemp(rootView, bitmap);
+        TextEditorDialogFragment textEditorDialogFragment =
+                TextEditorDialogFragment.show(this, "AAA", Color.RED, null, 25);
+        textEditorDialogFragment.setOnTextEditorListener(new TextEditorDialogFragment.TextEditor() {
+            @Override
+            public void onDone(String inputText, int colorCode) {
+                mPhotoEditor.editText(rootView, inputText, colorCode);
+                mTxtCurrentTool.setText(R.string.label_text);
+            }
+
+            @Override
+            public void onDone(Typeface typeface, String inputText, int colorCode, int textSize) {
+                Log.d("TABBBB", textSize+"");
+                mPhotoEditor.editText(rootView, typeface, inputText, colorCode, textSize);
+                mTxtCurrentTool.setText(R.string.label_text);
+            }
+        });
 
     }
 

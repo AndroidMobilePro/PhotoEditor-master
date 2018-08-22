@@ -1,5 +1,6 @@
 package com.burhanrashid52.imageeditor.views;
 
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.view.View;
 
@@ -13,6 +14,16 @@ import android.view.View;
  * </p>
  */
 public interface OnPhotoEditorListener {
+
+    /**
+     * When user long press the existing text this event will trigger implying that user want to
+     * edit the current {@link android.widget.TextView}
+     *
+     * @param rootView  view on which the long press occurs
+     * @param text      current text set on the view
+     * @param colorCode current color value set on view
+     */
+    void onImageChangeListener(View rootView, Bitmap bitmap);
 
     /**
      * When user long press the existing text this event will trigger implying that user want to

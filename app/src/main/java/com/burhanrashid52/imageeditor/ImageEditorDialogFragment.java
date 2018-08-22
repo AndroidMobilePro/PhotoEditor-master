@@ -24,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -53,9 +52,9 @@ import org.dmfs.android.retentionmagic.annotations.Retain;
 
 import java.util.ArrayList;
 
-public class TextEditorDialogFragment extends DialogFragment implements EditViewAdapter.EditViewListener, SeekBar.OnSeekBarChangeListener, ColorPickerDialogFragment.ColorDialogResultListener {
+public class ImageEditorDialogFragment extends DialogFragment implements EditViewAdapter.EditViewListener, SeekBar.OnSeekBarChangeListener, ColorPickerDialogFragment.ColorDialogResultListener {
 
-    public static final String TAG = TextEditorDialogFragment.class.getSimpleName();
+    public static final String TAG = ImageEditorDialogFragment.class.getSimpleName();
     public static final String EXTRA_INPUT_TEXT = "extra_input_text";
     public static final String EXTRA_COLOR_CODE = "extra_color_code";
     public static final String EXTRA_SIZE_CODE = "extra_size_code";
@@ -147,14 +146,14 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
 
 
     //Show dialog with provide text and text color
-    public static TextEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity,
-                                                @NonNull String inputText,
-                                                @ColorInt int colorCode) {
+    public static ImageEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity,
+                                                 @NonNull String inputText,
+                                                 @ColorInt int colorCode) {
         Bundle args = new Bundle();
         args.putString(EXTRA_INPUT_TEXT, inputText);
         args.putInt(EXTRA_COLOR_CODE, colorCode);
         args.putInt(EXTRA_SIZE_CODE, mSizeCode);
-        TextEditorDialogFragment fragment = new TextEditorDialogFragment();
+        ImageEditorDialogFragment fragment = new ImageEditorDialogFragment();
         fragment.setArguments(args);
         fragment.show(appCompatActivity.getSupportFragmentManager(), TAG);
 
@@ -165,9 +164,9 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     }
 
     //Show dialog with provide text and text color, typeFace
-    public static TextEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity,
-                                                @NonNull String inputText,
-                                                @ColorInt int colorCode, Typeface typeface, int textSize) {
+    public static ImageEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity,
+                                                 @NonNull String inputText,
+                                                 @ColorInt int colorCode, Typeface typeface, int textSize) {
         Bundle args = new Bundle();
         String type = typeface.toString();
         Log.d("TAGGG", type);
@@ -177,7 +176,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
         args.putInt(EXTRA_SIZE_CODE, textSize);
         mSizeCode = textSize;
 
-        TextEditorDialogFragment fragment = new TextEditorDialogFragment();
+        ImageEditorDialogFragment fragment = new ImageEditorDialogFragment();
         fragment.setArguments(args);
         fragment.show(appCompatActivity.getSupportFragmentManager(), TAG);
 
@@ -191,7 +190,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     }
 
     //Show dialog with default text input as empty and text color white
-    public static TextEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity) {
+    public static ImageEditorDialogFragment show(@NonNull AppCompatActivity appCompatActivity) {
         return show(appCompatActivity,
                 "", ContextCompat.getColor(appCompatActivity, R.color.white));
     }
@@ -205,7 +204,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 
@@ -221,7 +220,7 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.add_text_dialog_test, container, false);
+        return inflater.inflate(R.layout.add_image_dialog_test, container, false);
     }
 
     @Override
