@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +18,8 @@ import android.support.constraint.ConstraintSet;
 import android.support.design.widget.Snackbar;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,7 @@ import com.burhanrashid52.imageeditor.base.BaseActivity;
 import com.burhanrashid52.imageeditor.emoji.EmojiAdapters;
 import com.burhanrashid52.imageeditor.filters.FilterListener;
 import com.burhanrashid52.imageeditor.filters.FilterViewAdapter;
+import com.burhanrashid52.imageeditor.image.ImageEditorDialogFragment;
 import com.burhanrashid52.imageeditor.stickers.StickerAdapters;
 import com.burhanrashid52.imageeditor.stickers.StickerBSFragment;
 import com.burhanrashid52.imageeditor.tools.EditingToolsAdapter;
@@ -95,7 +97,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         makeFullScreen();
-        setContentView(R.layout.activity_edit_image_test);
+        setContentView(R.layout.activity_edit_image_test_temp);
 
         if (getIntent().getStringExtra(StartActivity.KEY_TYPE) != null) {
             key = getIntent().getStringExtra(StartActivity.KEY_TYPE);
@@ -206,24 +208,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
     @Override
     public void onImageChangeListener(final View rootView, Bitmap bitmap) {
-//        mPhotoEditor.addImageTemp(rootView, bitmap);
-        TextEditorDialogFragment textEditorDialogFragment =
-                TextEditorDialogFragment.show(this, "AAA", Color.RED, null, 25);
-        textEditorDialogFragment.setOnTextEditorListener(new TextEditorDialogFragment.TextEditor() {
-            @Override
-            public void onDone(String inputText, int colorCode) {
-                mPhotoEditor.editText(rootView, inputText, colorCode);
-                mTxtCurrentTool.setText(R.string.label_text);
-            }
-
-            @Override
-            public void onDone(Typeface typeface, String inputText, int colorCode, int textSize) {
-                Log.d("TABBBB", textSize+"");
-                mPhotoEditor.editText(rootView, typeface, inputText, colorCode, textSize);
-                mTxtCurrentTool.setText(R.string.label_text);
-            }
-        });
-
+        ImageEditorDialogFragment editorDialogFragment = ImageEditorDialogFragment.getInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction beginTrasaction = fragmentManager.beginTransaction();
+        beginTrasaction.add(R.id.frContainer, editorDialogFragment);
+        beginTrasaction.commit();
     }
 
     @Override
@@ -239,7 +228,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             @Override
             public void onDone(Typeface typeface, String inputText, int colorCode, int textSize) {
-                Log.d("TABBBB", textSize+"");
+                Log.d("TABBBB", textSize + "");
                 mPhotoEditor.editText(rootView, typeface, inputText, colorCode, textSize);
                 mTxtCurrentTool.setText(R.string.label_text);
             }
@@ -259,7 +248,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
             @Override
             public void onDone(Typeface typeface, String inputText, int colorCode, int textSize) {
-                Log.d("TABBBB", textSize+"");
+                Log.d("TABBBB", textSize + "");
                 mPhotoEditor.editText(rootView, typeface, inputText, colorCode, textSize);
                 mTxtCurrentTool.setText(R.string.label_text);
             }
