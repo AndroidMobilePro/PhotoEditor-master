@@ -87,7 +87,8 @@
         android:paddingTop="4dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:layout_editor_absoluteY="366dp"
-        tools:listitem="@layout/row_editing_tools" />
+        tools:listitem="@layout/row_editing_tools"
+        tools:ignore="MissingConstraints" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvFilterView"

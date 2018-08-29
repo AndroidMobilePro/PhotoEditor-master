@@ -28,13 +28,13 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
     private List<Integer> colorPickerColors;
     private OnColorPickerClickListener onColorPickerClickListener;
 
-    ColorPickerAdapter(@NonNull Context context, @NonNull List<Integer> colorPickerColors) {
+    public ColorPickerAdapter(@NonNull Context context, @NonNull List<Integer> colorPickerColors) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.colorPickerColors = colorPickerColors;
     }
 
-    ColorPickerAdapter(@NonNull Context context) {
+    public ColorPickerAdapter(@NonNull Context context) {
         this(context, getDefaultColors(context));
         this.context = context;
         this.inflater = LayoutInflater.from(context);

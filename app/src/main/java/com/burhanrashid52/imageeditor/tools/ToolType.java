@@ -6,6 +6,7 @@ package com.burhanrashid52.imageeditor.tools;
  * @since 5/23/2018
  */
 public enum ToolType {
+    BACKGROUND,
     BRUSH,
     TEXT,
     ERASER,

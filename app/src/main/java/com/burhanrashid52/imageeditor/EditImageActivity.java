@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.burhanrashid52.imageeditor.base.BaseActivity;
+import com.burhanrashid52.imageeditor.edit.image.FiltersListFragment;
 import com.burhanrashid52.imageeditor.emoji.EmojiAdapters;
 import com.burhanrashid52.imageeditor.filters.FilterListener;
 import com.burhanrashid52.imageeditor.filters.FilterViewAdapter;
@@ -57,6 +59,9 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.zomato.photofilters.imageprocessors.Filter;
+
+import static com.burhanrashid52.imageeditor.edit.image.FiltersListFragment.IMAGE_NAME;
 
 public class EditImageActivity extends BaseActivity implements OnPhotoEditorListener,
         View.OnClickListener,
@@ -79,12 +84,14 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private RecyclerView mRvFilters;
     private RecyclerView mRvSticker;
     private RecyclerView mRvEmoji;
+    private RecyclerView mRvFrame;
     private ImageView imgOpen;
 
 
     private EditingToolsAdapter mEditingToolsAdapter = new EditingToolsAdapter(this);
     private FilterViewAdapter mFilterViewAdapter = new FilterViewAdapter(this);
     private StickerAdapters mStickerViewAdapter = new StickerAdapters(this);
+    private StickerAdapters mFrameViewAdapter = new StickerAdapters(this);
     private EmojiAdapters mEmojiViewAdapter;
     private ConstraintLayout mRootView;
     private ConstraintSet mConstraintSet = new ConstraintSet();
@@ -93,11 +100,19 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private boolean mIsEmojiVisible;
     private String key = "1";
 
+
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         makeFullScreen();
-        setContentView(R.layout.activity_edit_image_test_temp);
+        setContentView(R.layout.activity_edit_image_test_ui);
+
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         if (getIntent().getStringExtra(StartActivity.KEY_TYPE) != null) {
             key = getIntent().getStringExtra(StartActivity.KEY_TYPE);
@@ -132,6 +147,11 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mRvEmoji.setAdapter(mEmojiViewAdapter);
 
 
+        LinearLayoutManager llmFrame = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRvFrame.setLayoutManager(llmFrame);
+        mRvFrame.setAdapter(mFrameViewAdapter);
+
+
         //Typeface mTextRobotoTf = ResourcesCompat.getFont(this, R.font.roboto_medium);
         //Typeface mEmojiTypeFace = Typeface.createFromAsset(getAssets(), "emojione-android.ttf");
 
@@ -150,9 +170,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         switch (key) {
             case "1":
                 Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.got_s);
-                mPhotoEditor.addImage(image);
-//                mPhotoEditorView.getSource().setBackgroundResource(R.drawable.got_s);
-//                mPhotoEditorView.getSource().setImageResource(R.drawable.got);
+                Bitmap imageScale = Bitmap.createScaledBitmap(image, 300, 300, false);
+                mPhotoEditor.addImage(imageScale);
                 break;
             case "2":
                 mPhotoEditorView.getSource().setImageResource(R.drawable.got);
@@ -181,6 +200,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mRvFilters = findViewById(R.id.rvFilterView);
         mRvSticker = findViewById(R.id.rvSticker);
         mRvEmoji = findViewById(R.id.rvEmoji);
+        mRvFrame = findViewById(R.id.rvFrame);
         mRootView = findViewById(R.id.rootView);
 
         imgUndo = findViewById(R.id.imgUndo);
@@ -205,15 +225,75 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         imgOpen.setOnClickListener(this);
 
     }
+    Bitmap originalImage;
+    Bitmap filteredImage;
+
+    // load the default image from assets on app launch
+    private void loadImage() {
+        originalImage = BitmapUtils.getBitmapFromAssets(this, IMAGE_NAME, 300, 300);
+        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+    }
 
     @Override
-    public void onImageChangeListener(final View rootView, Bitmap bitmap) {
+    public void onImageChangeListener(final View rootView, final Bitmap bitmap) {
+
         ImageEditorDialogFragment editorDialogFragment = ImageEditorDialogFragment.getInstance();
+        editorDialogFragment.setBitmap(bitmap);
+        editorDialogFragment.setOnToolImageSelectedListener(new ImageEditorDialogFragment.OnToolImageSelectedListener() {
+            @Override
+            public void onAdjustClick() {
+
+            }
+
+            @Override
+            public void onOpacityClick() {
+
+            }
+
+            @Override
+            public void onBlendingClick() {
+
+            }
+
+            @Override
+            public void onFilterClick(Filter filter) {
+                filteredImage = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                mPhotoEditor.addImageTemp(rootView, filter.processFilter(filteredImage));
+                // preview filtered image
+//        imagePreview.setBitmapBackground(filter.processFilter(filteredImage), true);
+//                .setImageBitmap(filter.processFilter(filteredImage));
+
+            }
+
+            @Override
+            public void onFrameClick() {
+
+            }
+
+            @Override
+            public void onCrop(Bitmap bitmap) {
+                mPhotoEditor.addImageTemp(rootView, bitmap);
+            }
+        });
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction beginTrasaction = fragmentManager.beginTransaction();
-        beginTrasaction.add(R.id.frContainer, editorDialogFragment);
+        beginTrasaction.replace(R.id.frContainer, editorDialogFragment);
         beginTrasaction.commit();
     }
+
+
+//    /**
+//     * Resets image edit controls to normal when new filter
+//     * is selected
+//     */
+//    private void resetControls() {
+//        if (editImageFragment != null) {
+//            editImageFragment.resetControls();
+//        }
+//        brightnessFinal = 0;
+//        saturationFinal = 1.0f;
+//        contrastFinal = 1.0f;
+//    }
 
     @Override
     public void onEditTextChangeListener(final View rootView, String text, int colorCode) {
@@ -612,6 +692,10 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     @Override
     public void onToolSelected(ToolType toolType) {
         switch (toolType) {
+            case BACKGROUND:
+                mTxtCurrentTool.setText(R.string.label_filter);
+                showFrame(true);
+                break;
             case BRUSH:
                 mPhotoEditor.setBrushDrawingMode(true);
                 mTxtCurrentTool.setText(R.string.label_brush);
@@ -706,6 +790,30 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mConstraintSet.applyTo(mRootView);
     }
 
+    void showFrame(boolean isVisible) {
+        mIsFrame = isVisible;
+        mConstraintSet.clone(mRootView);
+
+        if (isVisible) {
+            mConstraintSet.clear(mRvFrame.getId(), ConstraintSet.START);
+            mConstraintSet.connect(mRvFrame.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.START);
+            mConstraintSet.connect(mRvFrame.getId(), ConstraintSet.END,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+        } else {
+            mConstraintSet.connect(mRvFrame.getId(), ConstraintSet.START,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END);
+            mConstraintSet.clear(mRvFrame.getId(), ConstraintSet.END);
+        }
+
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(350);
+        changeBounds.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
+        TransitionManager.beginDelayedTransition(mRootView, changeBounds);
+
+        mConstraintSet.applyTo(mRootView);
+    }
+
     void showEmoji(boolean isVisible) {
         mIsEmojiVisible = isVisible;
         mConstraintSet.clone(mRootView);
@@ -729,13 +837,19 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         mConstraintSet.applyTo(mRootView);
     }
+    boolean mIsFrame;
 
     @Override
     public void onBackPressed() {
         if (mIsFilterVisible) {
             showFilter(false);
             mTxtCurrentTool.setText(R.string.app_name);
-        } else if (mIsStickerVisible) {
+        } else if(mIsFrame){
+            showFrame(false);
+            mTxtCurrentTool.setText(R.string.app_name);
+        }
+
+        else if (mIsStickerVisible) {
             imgOpen.setVisibility(View.GONE);
             showSticker(false);
             mTxtCurrentTool.setText(R.string.app_name);

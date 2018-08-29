@@ -359,13 +359,6 @@ public class TextEditorDialogFragment extends DialogFragment implements EditView
                 mAddTextEditText.setTypeface(mTypeface);
             }
         });
-//        colorPickerAdapter.setOnColorPickerClickListener(new ColorPickerAdapter.OnColorPickerClickListener() {
-//            @Override
-//            public void onColorPickerClickListener(int colorCode) {
-//                mColorCode = colorCode;
-//                mAddTextEditText.setTextColor(colorCode);
-//            }
-//        });
         addTextFontsRecyclerView.setAdapter(fontsAdapter);
 
         //Setup the color picker for text color

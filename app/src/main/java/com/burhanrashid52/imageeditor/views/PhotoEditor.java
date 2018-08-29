@@ -120,7 +120,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
 
         if (imageView != null && addedImageViews.contains(view)) {
-            imageView.setImageResource(R.drawable.ic_food);
+            imageView.setImageBitmap(desiredImage);
             parentView.updateViewLayout(view, view.getLayoutParams());
             int i = addedImageViews.indexOf(view);
             if (i > -1) addedImageViews.set(i, view);
